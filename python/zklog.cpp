@@ -1,4 +1,5 @@
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 #include <zkinject/zklog.hh>
 
@@ -28,12 +29,19 @@ void init_zklog(py::module& m) {
                zklog::log_error_code::LOG_ERROR_INDEX_OUT_OF_RANGE)
         .export_values();
 
+    using namespace pybind11::literals;  // for arguments
     py::class_<zklog::ZkLog>(zklog, "Zklog")
-        .def_static("get_logger", zklog::ZkLog::get_logger)
-        .def_property_readonly_static("l_instance", &zklog::ZkLog::)
+        // zklog is meant to be used as a singleton.
+        .def_static("get_logger", zklog::ZkLog::get_logger,
+                    py::return_value_policy::reference)
         .def("set_log_buffer_count", &zklog::ZkLog::set_log_buffer_count)
         .def("clear_log", &zklog::ZkLog::clear_log)
-        .def("push_log", &zklog::ZkLog::push_log)
+        // push_log accepts an optoinal argument for log_error_code.
+        // by default, it is set to LOG_ERROR_NONE
+        .def("push_log", &zklog::ZkLog::push_log, "log_string"_a,
+             "level"_a,
+             py::arg_v("error_code", zklog::log_error_code::LOG_ERROR_NONE,
+                       "None"))
         .def("pop_log", &zklog::ZkLog::pop_log)
         .def("peek_log_level", &zklog::ZkLog::peek_log_level);
 }
