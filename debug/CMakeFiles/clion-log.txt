@@ -1,5 +1,0 @@
-/home/rxored/Packages/clion-2022.2.4/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/home/rxored/Packages/clion-2022.2.4/bin/ninja/linux/ninja -G Ninja -S /home/rxored/repos/pyzkinject -B /home/rxored/repos/pyzkinject/debug
--- Found pybind11: /usr/include (found version "2.10.2")
--- Configuring done
--- Generating done
--- Build files have been written to: /home/rxored/repos/pyzkinject/debug

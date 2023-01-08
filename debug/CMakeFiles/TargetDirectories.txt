@@ -1,7 +1,0 @@
-/home/rxored/repos/pyzkinject/debug/CMakeFiles/pyzkinject.dir
-/home/rxored/repos/pyzkinject/debug/CMakeFiles/edit_cache.dir
-/home/rxored/repos/pyzkinject/debug/CMakeFiles/rebuild_cache.dir
-/home/rxored/repos/pyzkinject/debug/CMakeFiles/list_install_components.dir
-/home/rxored/repos/pyzkinject/debug/CMakeFiles/install.dir
-/home/rxored/repos/pyzkinject/debug/CMakeFiles/install/local.dir
-/home/rxored/repos/pyzkinject/debug/CMakeFiles/install/strip.dir
