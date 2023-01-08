@@ -1,5 +1,6 @@
 #include <pybind11/numpy.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 #include <zkinject/zkelf.hh>
 
@@ -89,8 +90,8 @@ void init_zkelf(py::module& m) {
 
     py::enum_<zkelf::e_version>(zkelf, "e_version")
         .value("EV_CURRENT", zkelf::e_version::EV_CURRENT)
-        .value("", zkelf::e_version::EV_NONE)
-        .value("", zkelf::e_version::EV_NUM)
+        .value("EV_NONE", zkelf::e_version::EV_NONE)
+        .value("EV_NUM", zkelf::e_version::EV_NUM)
         .export_values();
 
     py::class_<zkelf::ehdr_t<x64>>(zkelf, "ehdr_x64")
