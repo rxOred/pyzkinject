@@ -17,13 +17,14 @@ set(PYTHON_LIBRARY_DIR "/home/rxored/.local/lib/python3.10/site-packages")
 set(PYTHON_EXECUTABLE "/usr/bin/python3.10")
 set(ZKINJECT_SOURCE_FILES "~/repos/zkinject/src/*.cc")
 set(ZKINJECT_INCLUDE_PATH "~/repos/zkinject/include/*.hh")
+set(ZKINJECT "/usr/lib/libzkinject.so")
 
 include_directories("~/repos/zkinject/include/")
 include_directories("${CMAKE_SOURCE_DIR}/python")
 
 # just for this case
-file(GLOB SOURCE_FILES ${ZKINJECT_SOURCE_FILES})
-file(GLOB HEADER_FILES ${ZKINJECT_INCLUDE_FILES})
+file(GLOB SOURCE_FILES "~/repos/zkinject/src/*.cc")
+file(GLOB HEADER_FILES "~/repos/zkinject/include/*.hh")
 file(GLOB PYTHON_FILES "python/*.cpp" "python/*.hpp")
 
 source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${SOURCE_FILES} ${HEADER_FILES} ${PYTHON_FILES})
@@ -35,7 +36,7 @@ pybind11_add_module(pyzkinject
         ${PYTHON_FILES}
         )
 
-target_link_libraries(pyzkinject PUBLIC)
+    target_link_libraries(pyzkinject PUBLIC ${ZKINJECT})
 
 install(TARGETS pyzkinject
         COMPONENT python
