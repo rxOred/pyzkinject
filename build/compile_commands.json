@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/home/rxored/repos/pyzkinject/build",
+  "command": "/usr/bin/g++ -Dpyzkinject_EXPORTS -I/home/rxored/repos/zkinject/include -I/home/rxored/repos/pyzkinject/python -isystem /usr/include/python3.10 -O3 -g -fPIC -fvisibility=hidden -std=c++17 -o CMakeFiles/pyzkinject.dir/python/zkelf.cc.o -c /home/rxored/repos/pyzkinject/python/zkelf.cc",
+  "file": "/home/rxored/repos/pyzkinject/python/zkelf.cc"
+},
+{
+  "directory": "/home/rxored/repos/pyzkinject/build",
+  "command": "/usr/bin/g++ -Dpyzkinject_EXPORTS -I/home/rxored/repos/zkinject/include -I/home/rxored/repos/pyzkinject/python -isystem /usr/include/python3.10 -O3 -g -fPIC -fvisibility=hidden -std=c++17 -o CMakeFiles/pyzkinject.dir/python/zkinject.cc.o -c /home/rxored/repos/pyzkinject/python/zkinject.cc",
+  "file": "/home/rxored/repos/pyzkinject/python/zkinject.cc"
+}
+]
