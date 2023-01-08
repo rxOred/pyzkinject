@@ -1,0 +1,7 @@
+# ninja log v5
+2	4468	1673195080119578728	CMakeFiles/pyzkinject.dir/python/zkinject.cpp.o	e75aab5d961fd5a3
+3	6335	1673195081982912016	CMakeFiles/pyzkinject.dir/python/zkmemorymap.cpp.o	400621adb1c5caa0
+2	7692	1673195083332911984	CMakeFiles/pyzkinject.dir/python/zklog.cpp.o	70f911ee88f012cc
+1	9177	1673195084819578615	CMakeFiles/pyzkinject.dir/python/zkelf.cpp.o	76d4bd5c96b222cb
+9178	9342	1673195084996245278	pyzkinject.cpython-310-x86_64-linux-gnu.so	592cd230e3614758
+3	20	0	CMakeFiles/install.util	177cec3c29e04966
