@@ -36,7 +36,7 @@ pybind11_add_module(pyzkinject
         ${PYTHON_FILES}
         )
 
-    target_link_libraries(pyzkinject PUBLIC ${ZKINJECT})
+target_link_libraries(pyzkinject PUBLIC ${ZKINJECT})
 
 install(TARGETS pyzkinject
         COMPONENT python
