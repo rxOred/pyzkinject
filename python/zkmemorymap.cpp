@@ -78,5 +78,5 @@ void init_zkmemorymap(py::module& m) {
     zkmm.doc() = "zkinject's memory map parser library";
 
     init_for_x64(zkmm);
-    // init_for_x86(zkmm);
+    init_for_x86(zkmm);
 }
