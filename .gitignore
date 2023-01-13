@@ -2,6 +2,7 @@
 .idea/
 .cache/
 debug/
+build/*
 .gdb_history
 # Prerequisites
 *.d
