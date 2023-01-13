@@ -138,7 +138,7 @@ void init_relocation_for_x64(py::module& m) {
         .def_readwrite("r_info", &zkelf::relocation_t<x64, false>::r_info)
         .doc() = "relocation table entry without the addend";
 
-    py::class_<zkelf::relocation_t<x64, true>>(m, "rel_x64")
+    py::class_<zkelf::relocation_t<x64, true>>(m, "rela_x64")
         .def_readwrite("r_offset",
                        &zkelf::relocation_t<x64, true>::r_offset)
         .def_readwrite("r_info", &zkelf::relocation_t<x64, true>::r_info)
@@ -154,12 +154,12 @@ void init_relocation_for_x86(py::module& m) {
         .def_readwrite("r_info", &zkelf::relocation_t<x86, false>::r_info)
         .doc() = "relocation table entry without the addend";
 
-    py::class_<zkelf::relocation_t<x86, true>>(m, "rel_x86")
+    py::class_<zkelf::relocation_t<x86, true>>(m, "rela_x86")
         .def_readwrite("r_offset",
                        &zkelf::relocation_t<x86, true>::r_offset)
         .def_readwrite("r_info", &zkelf::relocation_t<x86, true>::r_info)
         .def_readwrite("r_addend",
-                       &zkelf::relocation_t<x64, true>::r_addend)
+                       &zkelf::relocation_t<x86, true>::r_addend)
         .doc() = "relocation table entry with the addend";
 }
 
@@ -193,14 +193,20 @@ void init_dynamic_for_x86(py::module& m) {
         .doc() = "dynamic section entry for x86";
 }
 
+// TODO in elfobj, functions that return raw pointers might not work
+// properly
 void init_elfobj_for_x64(py::module& m) {
     py::class_<zkelf::ElfObj<x64>>(m, "Elfobj_x64")
         .def(py::init<void*, std::size_t,
                       std::variant<const char*, pid_t>>())
-        .def("is_stripped", &zkelf::ElfObj<x64>::is_stripped)
-        .def("get_memory_map", &zkelf::ElfObj<x64>::get_memory_map)
-        .def("get_map_size", &zkelf::ElfObj<x64>::get_map_size)
-        .def("get_elf_source", &zkelf::ElfObj<x64>::get_elf_source)
+        .def_property_readonly("is_stripped",
+                               &zkelf::ElfObj<x64>::is_stripped)
+        .def_property_readonly("memory_map",
+                               &zkelf::ElfObj<x64>::get_memory_map)
+        .def_property_readonly("map_size",
+                               &zkelf::ElfObj<x64>::get_map_size)
+        .def_property_readonly("elf_source",
+                               &zkelf::ElfObj<x64>::get_elf_source)
         .def_property("elf_header", &zkelf::ElfObj<x64>::get_elf_header,
                       &zkelf::ElfObj<x64>::set_elf_header)
         .def_property("program_header_table",
@@ -237,10 +243,14 @@ void init_elfobj_for_x86(py::module& m) {
     py::class_<zkelf::ElfObj<x86>>(m, "Elfobj_x86")
         .def(py::init<void*, std::size_t,
                       std::variant<const char*, pid_t>>())
-        .def("is_stripped", &zkelf::ElfObj<x86>::is_stripped)
-        .def("get_memory_map", &zkelf::ElfObj<x86>::get_memory_map)
-        .def("get_map_size", &zkelf::ElfObj<x86>::get_map_size)
-        .def("get_elf_source", &zkelf::ElfObj<x86>::get_elf_source)
+        .def_property_readonly("is_stripped",
+                               &zkelf::ElfObj<x86>::is_stripped)
+        .def_property_readonly("memory_map",
+                               &zkelf::ElfObj<x86>::get_memory_map)
+        .def_property_readonly("map_size",
+                               &zkelf::ElfObj<x86>::get_map_size)
+        .def_property_readonly("elf_source",
+                               &zkelf::ElfObj<x86>::get_elf_source)
         .def_property("elf_header", &zkelf::ElfObj<x86>::get_elf_header,
                       &zkelf::ElfObj<x86>::set_elf_header)
         .def_property("program_header_table",
@@ -273,9 +283,146 @@ void init_elfobj_for_x86(py::module& m) {
         .doc() = "internal class that represents an elf object";
 }
 
-void init_zkelf_for_x64(py::module& m) {}
-
-void init_zkelf_for_x86(py::module& m) {}
+void init_zkelf_for_x64(py::module& m) {
+    py::class_<zkelf::ZkElf>(m, "Zkelf")
+        .def(py::init(
+            [](zkelf::ElfObj<x64> elf, std::optional<zklog::ZkLog*> log) {
+                return std::make_unique<zkelf::ZkElf>(
+                    elf, zkelf::elf_read_only{}, log);
+            }))
+        .def(py::init(
+            [](zkelf::ElfObj<x86> elf, std::optional<zklog::ZkLog*> log) {
+                return std::make_unique<zkelf::ZkElf>(
+                    elf, zkelf::elf_read_only{}, log);
+            }))
+        .def(py::init([](zkelf::ElfObj<x64> elf, zkelf::elf_read_write op,
+                         std::optional<zklog::ZkLog*> log) {
+            return std::make_unique<zkelf::ZkElf>(elf, op, log);
+        }))
+        .def(py::init([](zkelf::ElfObj<x86> elf, zkelf::elf_read_write op,
+                         std::optional<zklog::ZkLog*> log) {
+            return std::make_unique<zkelf::ZkElf>(elf, op, log);
+        }))
+        .def("get_memory_map", &zkelf::ZkElf::get_memory_map)
+        .def("get_map_size", &zkelf::ZkElf::get_map_size)
+        .def("is_stripped", &zkelf::ZkElf::is_stripped)
+        .def("get_elf_class", &zkelf::ZkElf::get_elf_class)
+        .def("get_elf_encoding", &zkelf::ZkElf::get_elf_encoding)
+        .def("get_elf_osabi", &zkelf::ZkElf::get_elf_osabi)
+        .def("get_elf_type", &zkelf::ZkElf::get_elf_type)
+        .def("get_elf_machine", &zkelf::ZkElf::get_elf_machine)
+        .def("get_elf_version", &zkelf::ZkElf::get_elf_version)
+        .def("get_elf_entry_point", &zkelf::ZkElf::get_elf_entry_point)
+        .def("get_elf_phdr_offset", &zkelf::ZkElf::get_elf_phdr_offset)
+        .def("get_elf_shdr_offset", &zkelf::ZkElf::get_elf_shdr_offset)
+        .def("get_elf_flags", &zkelf::ZkElf::get_elf_flags)
+        .def("get_elf_header_size", &zkelf::ZkElf::get_elf_header_size)
+        .def("get_elf_phdr_entry_size",
+             &zkelf::ZkElf::get_elf_phdr_entry_size)
+        .def("get_elf_phdr_entry_count",
+             &zkelf::ZkElf::get_elf_phdr_entry_count)
+        .def("get_elf_shdr_entry_size",
+             &zkelf::ZkElf::get_elf_shdr_entry_size)
+        .def("get_elf_shdr_entry_count",
+             &zkelf::ZkElf::get_elf_shdr_entry_count)
+        .def("get_elf_shdr_string_table_index",
+             &zkelf::ZkElf::get_elf_shdr_string_table_index)
+        .def("get_section_name_index",
+             &zkelf::ZkElf::get_section_name_index)
+        .def("get_section_type", &zkelf::ZkElf::get_section_type)
+        .def("get_section_flags", &zkelf::ZkElf::get_section_flags)
+        .def("get_section_address", &zkelf::ZkElf::get_section_address)
+        .def("get_section_offset", &zkelf::ZkElf::get_section_offset)
+        .def("get_section_size", &zkelf::ZkElf::get_section_size)
+        .def("get_section_address_alignment",
+             &zkelf::ZkElf::get_section_address_alignment)
+        .def("get_section_entry_size",
+             &zkelf::ZkElf::get_section_entry_size)
+        .def("get_section_link", &zkelf::ZkElf::get_section_link)
+        .def("get_section_info", &zkelf::ZkElf::get_section_info)
+        .def("get_segment_type", &zkelf::ZkElf::get_segment_type)
+        .def("get_segment_offset", &zkelf::ZkElf::get_segment_offset)
+        .def("get_segment_vaddress", &zkelf::ZkElf::get_segment_vaddress)
+        .def("get_segment_paddress", &zkelf::ZkElf::get_segment_paddress)
+        .def("get_segment_flags", &zkelf::ZkElf::get_segment_flags)
+        .def("get_segment_file_size", &zkelf::ZkElf::get_segment_file_size)
+        .def("get_segment_memory_size",
+             &zkelf::ZkElf::get_segment_memory_size)
+        .def("get_segment_address_alignment",
+             &zkelf::ZkElf::get_segment_address_alignment)
+        .def("get_section_index_by_name",
+             &zkelf::ZkElf::get_section_index_by_name)
+        .def("get_section_index_by_attr",
+             &zkelf::ZkElf::get_section_index_by_attr)
+        .def("get_segment_index_by_attr",
+             &zkelf::ZkElf::get_segment_index_by_attr)
+        .def("get_symbol_index_by_name",
+             &zkelf::ZkElf::get_symbol_index_by_name)
+        .def("get_dynamic_symbol_index_by_name",
+             &zkelf::ZkElf::get_dynamic_symbol_index_by_name)
+        .def("set_stripped", &zkelf::ZkElf::set_stripped)
+        .def("set_elf_type", &zkelf::ZkElf::set_elf_type)
+        .def("set_elf_machine", &zkelf::ZkElf::set_elf_machine)
+        .def("set_elf_version", &zkelf::ZkElf::set_elf_version)
+        .def("set_elf_flags", &zkelf::ZkElf::set_elf_flags)
+        .def("set_elf_entry_point",
+             &zkelf::ZkElf::set_elf_entry_point<x64::addr_t>)
+        .def("set_elf_entry_point",
+             &zkelf::ZkElf::set_elf_entry_point<x86::addr_t>)
+        .def("set_elf_phdr_offset",
+             &zkelf::ZkElf::set_elf_phdr_offset<x64::off_t>)
+        .def("set_elf_phdr_offset",
+             &zkelf::ZkElf::set_elf_phdr_offset<x86::off_t>)
+        .def("set_elf_shdr_offset",
+             &zkelf::ZkElf::set_elf_shdr_offset<x64::off_t>)
+        .def("set_elf_shdr_offset",
+             &zkelf::ZkElf::set_elf_shdr_offset<x86::off_t>)
+        .def("set_elf_phdr_entry_count",
+             &zkelf::ZkElf::set_elf_phdr_entry_count)
+        .def("set_elf_shdr_entry_count",
+             &zkelf::ZkElf::set_elf_shdr_entry_count)
+        .def("set_elf_shdr_string_table_index",
+             &zkelf::ZkElf::set_elf_shdr_string_table_index)
+        .def("set_elf_header", &zkelf::ZkElf::set_elf_header)
+        .def("set_section_name_index",
+             &zkelf::ZkElf::set_section_name_index)
+        .def("set_section_type", &zkelf::ZkElf::set_section_type)
+        .def("set_section_address",
+             &zkelf::ZkElf::set_section_address<x64::addr_t>)
+        .def("set_section_address",
+             &zkelf::ZkElf::set_section_address<x86::addr_t>)
+        .def("set_section_offset", &zkelf::ZkElf::set_section_offset<x64::off_t>)
+        .def("set_section_offset", &zkelf::ZkElf::set_section_offset<x86::off_t>)
+        .def("set_section_size", &zkelf::ZkElf::set_section_size<x64::addr_t>)
+        .def("set_section_size", &zkelf::ZkElf::set_section_size<x86::addr_t>)
+        .def("set_section_address_alignment",
+             &zkelf::ZkElf::set_section_address_alignment<x64::addr_t>)
+        .def("set_section_address_alignment",
+             &zkelf::ZkElf::set_section_address_alignment<x86::addr_t>)
+        .def("set_section_link", &zkelf::ZkElf::set_section_link)
+        .def("set_section_info", &zkelf::ZkElf::set_section_info)
+		.def("set_section_header_table", &zkelf::ZkElf::set_section_header_table<zkelf::shdr_t<x64>>)
+		.def("set_section_header_table", &zkelf::ZkElf::set_section_header_table<zkelf::shdr_t<x86>>)
+		// set_section_header
+		.def("set_section_data", &zkelf::ZkElf::set_section_data)
+		.def("set_segment_type", &zkelf::ZkElf::set_segment_type)
+		.def("set_segment_offset", &zkelf::ZkElf::set_segment_offset<x64::off_t>)
+		.def("set_segment_offset", &zkelf::ZkElf::set_segment_offset<x86::off_t>)
+		.def("set_segment_vaddress", &zkelf::ZkElf::set_segment_vaddress<x64::addr_t>)
+		.def("set_segment_vaddress", &zkelf::ZkElf::set_segment_vaddress<x86::addr_t>)
+		.def("set_segment_paddress", &zkelf::ZkElf::set_segment_paddress<x64::addr_t>)
+		.def("set_segment_paddress", &zkelf::ZkElf::set_segment_paddress<x86::addr_t>)
+		.def("set_segment_flags", &zkelf::ZkElf::set_segment_flags)
+		.def("set_segment_file_size", &zkelf::ZkElf::set_segment_file_size)
+		.def("set_segment_memory_size", &zkelf::ZkElf::set_segment_alignment)
+		.def("set_program_header_table", &zkelf::ZkElf::set_program_header_table<zkelf::phdr_t<x64>>)	
+		.def("set_program_header_table", &zkelf::ZkElf::set_program_header_table<zkelf::phdr_t<x86>>)
+		// set_program_header
+		// set_segment_data
+		.def("elf_read", &zkelf::ZkElf::elf_read)
+		.def("elf_write", &zkelf::ZkElf::elf_write)
+		.def("save_source", &zkelf::ZkElf::save_source);
+}
 
 void init_zkelf(py::module& m) {
     auto zkelf = m.def_submodule("zkelf");
@@ -554,4 +701,21 @@ void init_zkelf(py::module& m) {
 
     init_elfobj_for_x64(zkelf);
     init_elfobj_for_x86(zkelf);
+
+    py::class_<zkelf::elf_read_only>(zkelf, "elf_read_only")
+        .def(py::init())
+        .doc() = "elf binaries that are opened only for read";
+
+    py::enum_<zkelf::elf_save_options>(zkelf, "elf_save_options")
+        .value("ELF_AUTO_SAVE", zkelf::elf_save_options::ELF_AUTO_SAVE)
+        .value("ELF_SAVE_AT_EXIT",
+               zkelf::elf_save_options::ELF_SAVE_AT_EXIT)
+        .value("ELF_NO_SAVE", zkelf::elf_save_options::ELF_NO_SAVE)
+        .export_values()
+        .doc() = "save options for elf binaries opened for read and write";
+
+    py::class_<zkelf::elf_read_write>(zkelf, "elf_read_write")
+        .def_readwrite("save_options",
+                       &zkelf::elf_read_write::save_options)
+        .doc() = "elf binaries that are opened for both read and write";
 }
