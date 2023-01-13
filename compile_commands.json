@@ -1,0 +1,27 @@
+[
+{
+  "directory": "/home/rxored/repos/pyzkinject/debug",
+  "command": "/usr/bin/c++ -Dpyzkinject_EXPORTS -I/home/rxored/repos/zkinject/include -I/home/rxored/repos/pyzkinject/python -isystem /usr/include/python3.10 -O3 -g -fPIC -fvisibility=hidden -std=c++17 -o CMakeFiles/pyzkinject.dir/python/pyzkinject.cpp.o -c /home/rxored/repos/pyzkinject/python/pyzkinject.cpp",
+  "file": "/home/rxored/repos/pyzkinject/python/pyzkinject.cpp"
+},
+{
+  "directory": "/home/rxored/repos/pyzkinject/debug",
+  "command": "/usr/bin/c++ -Dpyzkinject_EXPORTS -I/home/rxored/repos/zkinject/include -I/home/rxored/repos/pyzkinject/python -isystem /usr/include/python3.10 -O3 -g -fPIC -fvisibility=hidden -std=c++17 -o CMakeFiles/pyzkinject.dir/python/zkelf.cpp.o -c /home/rxored/repos/pyzkinject/python/zkelf.cpp",
+  "file": "/home/rxored/repos/pyzkinject/python/zkelf.cpp"
+},
+{
+  "directory": "/home/rxored/repos/pyzkinject/debug",
+  "command": "/usr/bin/c++ -Dpyzkinject_EXPORTS -I/home/rxored/repos/zkinject/include -I/home/rxored/repos/pyzkinject/python -isystem /usr/include/python3.10 -O3 -g -fPIC -fvisibility=hidden -std=c++17 -o CMakeFiles/pyzkinject.dir/python/zklog.cpp.o -c /home/rxored/repos/pyzkinject/python/zklog.cpp",
+  "file": "/home/rxored/repos/pyzkinject/python/zklog.cpp"
+},
+{
+  "directory": "/home/rxored/repos/pyzkinject/debug",
+  "command": "/usr/bin/c++ -Dpyzkinject_EXPORTS -I/home/rxored/repos/zkinject/include -I/home/rxored/repos/pyzkinject/python -isystem /usr/include/python3.10 -O3 -g -fPIC -fvisibility=hidden -std=c++17 -o CMakeFiles/pyzkinject.dir/python/zkmemorymap.cpp.o -c /home/rxored/repos/pyzkinject/python/zkmemorymap.cpp",
+  "file": "/home/rxored/repos/pyzkinject/python/zkmemorymap.cpp"
+},
+{
+  "directory": "/home/rxored/repos/pyzkinject/debug",
+  "command": "/usr/bin/c++ -Dpyzkinject_EXPORTS -I/home/rxored/repos/zkinject/include -I/home/rxored/repos/pyzkinject/python -isystem /usr/include/python3.10 -O3 -g -fPIC -fvisibility=hidden -std=c++17 -o CMakeFiles/pyzkinject.dir/python/zkprocess.cpp.o -c /home/rxored/repos/pyzkinject/python/zkprocess.cpp",
+  "file": "/home/rxored/repos/pyzkinject/python/zkprocess.cpp"
+}
+]
