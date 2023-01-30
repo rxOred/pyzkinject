@@ -6,7 +6,7 @@
 namespace py = pybind11;
 
 void init_for_x64(py::module& zkmm) {
-    py::class_<zkprocess::page_t<x64>>(zkmm, "page_t_x64")
+    py::class_<zkprocess::page_t<x64>>(zkmm, "page_x64")
         .def(py::init<x64::addr_t, x64::addr_t, std::string,
                       std::optional<std::string>>())
         .def("get_page_start_address",
@@ -40,7 +40,7 @@ void init_for_x64(py::module& zkmm) {
 }
 
 void init_for_x86(py::module& zkmm) {
-    py::class_<zkprocess::page_t<x86>>(zkmm, "page_t_x86")
+    py::class_<zkprocess::page_t<x86>>(zkmm, "page_x86")
         .def(py::init<x86::addr_t, x86::addr_t, std::string,
                       std::optional<std::string>>())
         .def("get_page_start_address",

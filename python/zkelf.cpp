@@ -193,7 +193,8 @@ void init_dynamic_for_x86(py::module& m) {
         .doc() = "dynamic section entry for x86";
 }
 
-// TODO in elfobj, functions that return raw pointers might not work
+// TODO
+//  in elfobj, functions that return raw pointers might not work
 // properly
 void init_elfobj_for_x64(py::module& m) {
     py::class_<zkelf::ElfObj<x64>>(m, "Elfobj_x64")
@@ -283,7 +284,7 @@ void init_elfobj_for_x86(py::module& m) {
         .doc() = "internal class that represents an elf object";
 }
 
-void init_zkelf_for_x64(py::module& m) {
+void init_zkelf_cls(py::module& m) {
     py::class_<zkelf::ZkElf>(m, "Zkelf")
         .def(py::init(
             [](zkelf::ElfObj<x64> elf, std::optional<zklog::ZkLog*> log) {
@@ -391,55 +392,75 @@ void init_zkelf_for_x64(py::module& m) {
              &zkelf::ZkElf::set_section_address<x64::addr_t>)
         .def("set_section_address",
              &zkelf::ZkElf::set_section_address<x86::addr_t>)
-        .def("set_section_offset", &zkelf::ZkElf::set_section_offset<x64::off_t>)
-        .def("set_section_offset", &zkelf::ZkElf::set_section_offset<x86::off_t>)
-        .def("set_section_size", &zkelf::ZkElf::set_section_size<x64::addr_t>)
-        .def("set_section_size", &zkelf::ZkElf::set_section_size<x86::addr_t>)
+        .def("set_section_offset",
+             &zkelf::ZkElf::set_section_offset<x64::off_t>)
+        .def("set_section_offset",
+             &zkelf::ZkElf::set_section_offset<x86::off_t>)
+        .def("set_section_size",
+             &zkelf::ZkElf::set_section_size<x64::addr_t>)
+        .def("set_section_size",
+             &zkelf::ZkElf::set_section_size<x86::addr_t>)
         .def("set_section_address_alignment",
              &zkelf::ZkElf::set_section_address_alignment<x64::addr_t>)
         .def("set_section_address_alignment",
              &zkelf::ZkElf::set_section_address_alignment<x86::addr_t>)
         .def("set_section_link", &zkelf::ZkElf::set_section_link)
         .def("set_section_info", &zkelf::ZkElf::set_section_info)
-		.def("set_section_header_table", &zkelf::ZkElf::set_section_header_table<zkelf::shdr_t<x64>>)
-		.def("set_section_header_table", &zkelf::ZkElf::set_section_header_table<zkelf::shdr_t<x86>>)
-		// set_section_header
-		.def("set_section_data", &zkelf::ZkElf::set_section_data)
-		.def("set_segment_type", &zkelf::ZkElf::set_segment_type)
-		.def("set_segment_offset", &zkelf::ZkElf::set_segment_offset<x64::off_t>)
-		.def("set_segment_offset", &zkelf::ZkElf::set_segment_offset<x86::off_t>)
-		.def("set_segment_vaddress", &zkelf::ZkElf::set_segment_vaddress<x64::addr_t>)
-		.def("set_segment_vaddress", &zkelf::ZkElf::set_segment_vaddress<x86::addr_t>)
-		.def("set_segment_paddress", &zkelf::ZkElf::set_segment_paddress<x64::addr_t>)
-		.def("set_segment_paddress", &zkelf::ZkElf::set_segment_paddress<x86::addr_t>)
-		.def("set_segment_flags", &zkelf::ZkElf::set_segment_flags)
-		.def("set_segment_file_size", &zkelf::ZkElf::set_segment_file_size)
-		.def("set_segment_memory_size", &zkelf::ZkElf::set_segment_alignment)
-		.def("set_program_header_table", &zkelf::ZkElf::set_program_header_table<zkelf::phdr_t<x64>>)	
-		.def("set_program_header_table", &zkelf::ZkElf::set_program_header_table<zkelf::phdr_t<x86>>)
-		// set_program_header
-		// set_segment_data
-		.def("elf_read", &zkelf::ZkElf::elf_read)
-		.def("elf_write", &zkelf::ZkElf::elf_write)
-		.def("save_source", &zkelf::ZkElf::save_source);
+        .def("set_section_header_table",
+             &zkelf::ZkElf::set_section_header_table<zkelf::shdr_t<x64>>)
+        .def("set_section_header_table",
+             &zkelf::ZkElf::set_section_header_table<zkelf::shdr_t<x86>>)
+        // set_section_header
+        //.def("set_section_data", &zkelf::ZkElf::set_section_data)
+        .def("set_segment_type", &zkelf::ZkElf::set_segment_type)
+        .def("set_segment_offset",
+             &zkelf::ZkElf::set_segment_offset<x64::off_t>)
+        .def("set_segment_offset",
+             &zkelf::ZkElf::set_segment_offset<x86::off_t>)
+        .def("set_segment_vaddress",
+             &zkelf::ZkElf::set_segment_vaddress<x64::addr_t>)
+        .def("set_segment_vaddress",
+             &zkelf::ZkElf::set_segment_vaddress<x86::addr_t>)
+        .def("set_segment_paddress",
+             &zkelf::ZkElf::set_segment_paddress<x64::addr_t>)
+        .def("set_segment_paddress",
+             &zkelf::ZkElf::set_segment_paddress<x86::addr_t>)
+        .def("set_segment_flags", &zkelf::ZkElf::set_segment_flags)
+        .def("set_segment_file_size", &zkelf::ZkElf::set_segment_file_size)
+        .def("set_segment_memory_size",
+             &zkelf::ZkElf::set_segment_alignment)
+        .def("set_program_header_table",
+             &zkelf::ZkElf::set_program_header_table<zkelf::phdr_t<x64>>)
+        .def("set_program_header_table",
+             &zkelf::ZkElf::set_program_header_table<zkelf::phdr_t<x86>>)
+        // set_program_header
+        // set_segment_data
+        .def("elf_read", &zkelf::ZkElf::elf_read)
+        .def("elf_write", &zkelf::ZkElf::elf_write)
+        .def("save_source", &zkelf::ZkElf::save_source)
+        .doc() = "zkelf class";
 }
 
 void init_zkelf(py::module& m) {
     auto zkelf = m.def_submodule("zkelf");
     zkelf.doc() = "zkinject's elf parser library";
+    zkelf.def("load_elf_from_file", zkelf::load_elf_from_file);
+    zkelf.def("load_elf_writable_from_file", zkelf::load_elf_writable_from_file);
+    // zkelf.def("load_elf_from_memory");
+
     py::enum_<zkelf::ei_class>(zkelf, "ei_class")
         .value("ELFCLASSNONE", zkelf::ei_class::ELFCLASSNONE)
         .value("ELFCLASS32", zkelf::ei_class::ELFCLASS32)
         .value("ELFCLASS64", zkelf::ei_class::ELFCLASS64)
-        .export_values()
-        .doc() = "architecture of the elf (64 or 32 bit)";
+        .export_values();
+    //.doc() = "architecture of the elf (64 or 32 bit)";
 
     py::enum_<zkelf::ei_data>(zkelf, "ei_data")
         .value("ELFDATANONE", zkelf::ei_data::ELFDATANONE)
         .value("ELFDATA2LSB", zkelf::ei_data::ELFDATA2LSB)
         .value("ELFDATA2MSB", zkelf::ei_data::ELFDATA2MSB)
-        .export_values()
-        .doc() = "data encoding of the elf";
+        .export_values();
+    //.doc() = "data encoding of the elf";
 
     py::enum_<zkelf::ei_osabi>(zkelf, "ei_osabi")
         .value("ELFOSABI_NONE", zkelf::ei_osabi::ELFOSABI_NONE)
@@ -458,8 +479,8 @@ void init_zkelf(py::module& m) {
         .value("ELFOSABI_ARM_AEABI", zkelf::ei_osabi::ELFOSABI_ARM_AEABI)
         .value("ELFOSABI_ARM", zkelf::ei_osabi::ELFOSABI_ARM)
         .value("ELFOSABI_STANDALONE", zkelf::ei_osabi::ELFOSABI_STANDALONE)
-        .export_values()
-        .doc() = "target Application Binary Interface (ABI) of the elf";
+        .export_values();
+    //.doc() = "target Application Binary Interface (ABI) of the elf";
 
     py::enum_<zkelf::e_ident>(zkelf, "e_ident")
         .value("EI_MAG0", zkelf::e_ident::EI_MAG0)
@@ -472,8 +493,8 @@ void init_zkelf(py::module& m) {
         .value("EI_OSABI", zkelf::e_ident::EI_OSABI)
         .value("EI_ABIVERSION", zkelf::e_ident::EI_ABIVERSION)
         .value("EI_PAD", zkelf::e_ident::EI_PAD)
-        .export_values()
-        .doc() = "first 16 bytes of the elf";
+        .export_values();
+    //.doc() = "first 16 bytes of the elf";
 
     py::enum_<zkelf::e_type>(zkelf, "e_type")
         .value("ET_NONE", zkelf::e_type::ET_NONE)
@@ -486,8 +507,8 @@ void init_zkelf(py::module& m) {
         .value("ET_HIOS", zkelf::e_type::ET_HIOS)
         .value("ET_LOPROC", zkelf::e_type::ET_LOPROC)
         .value("ET_HIPROC", zkelf::e_type::ET_HIPROC)
-        .export_values()
-        .doc() = "type of the elf";
+        .export_values();
+    //.doc() = "type of the elf";
 
     py::enum_<zkelf::e_machine>(zkelf, "e_machine")
         .value("EM_NONE", zkelf::e_machine::EM_NONE)
@@ -509,15 +530,15 @@ void init_zkelf(py::module& m) {
         .value("EM_X86_64", zkelf::e_machine::EM_X86_64)
         .value("EM_AVR", zkelf::e_machine::EM_AVR)
         .value("EM_BPF", zkelf::e_machine::EM_BPF)
-        .export_values()
-        .doc() = "target processor architecture of the elf";
+        .export_values();
+    //.doc() = "target processor architecture of the elf";
 
     py::enum_<zkelf::e_version>(zkelf, "e_version")
         .value("EV_CURRENT", zkelf::e_version::EV_CURRENT)
         .value("EV_NONE", zkelf::e_version::EV_NONE)
         .value("EV_NUM", zkelf::e_version::EV_NUM)
-        .export_values()
-        .doc() = "version of the elf";
+        .export_values();
+    //.doc() = "version of the elf";
 
     init_ehdr_for_x64(zkelf);
     init_ehdr_for_x86(zkelf);
@@ -533,15 +554,15 @@ void init_zkelf(py::module& m) {
         .value("PT_LOPROC", zkelf::p_type::PT_LOPROC)
         .value("PT_HIPROC", zkelf::p_type::PT_HIPROC)
         .value("PT_GNU_STACK", zkelf::p_type::PT_GNU_STACK)
-        .export_values()
-        .doc() = "type of the segment";
+        .export_values();
+    //.doc() = "type of the segment";
 
     py::enum_<zkelf::p_flags>(zkelf, "p_flags")
         .value("execute", zkelf::p_flags::PF_X)
         .value("read", zkelf::p_flags::PF_R)
         .value("write", zkelf::p_flags::PF_W)
-        .export_values()
-        .doc() = "permissions of the segment";
+        .export_values();
+    //.doc() = "permissions of the segment";
 
     init_phdr_for_x64(zkelf);
     init_phdr_for_x86(zkelf);
@@ -559,8 +580,7 @@ void init_zkelf(py::module& m) {
         .value("SHN_COMMON", zkelf::sh_n::SHN_COMMON)
         .value("SHN_XINDEX", zkelf::sh_n::SHN_XINDEX)
         .value("SHN_HIRESERVE", zkelf::sh_n::SHN_HIRESERVE)
-        .export_values()
-        .doc() = "TODO";  // TODO
+        .export_values();
 
     py::enum_<zkelf::s_type>(zkelf, "s_type")
         .value("SHT_NULL", zkelf::s_type::SHT_NULL)
@@ -599,8 +619,7 @@ void init_zkelf(py::module& m) {
         .value("SHT_HIPROC", zkelf::s_type::SHT_HIPROC)
         .value("SHT_LOUSER", zkelf::s_type::SHT_LOUSER)
         .value("SHT_HIUSER", zkelf::s_type::SHT_HIUSER)
-        .export_values()
-        .doc() = "TODO";  // TODO
+        .export_values();
 
     py::enum_<zkelf::sh_flags>(zkelf, "sh_flags")
         .value("SHF_WRITE", zkelf::sh_flags::SHF_WRITE)
@@ -615,8 +634,7 @@ void init_zkelf(py::module& m) {
         .value("SHF_GROUP", zkelf::sh_flags::SHF_GROUP)
         .value("SHF_TLS", zkelf::sh_flags::SHF_TLS)
         .value("SHF_COMPRESSED", zkelf::sh_flags::SHF_COMPRESSED)
-        .export_values()
-        .doc() = "section flags";
+        .export_values();
 
     init_shdr_for_x64(zkelf);
     init_shdr_for_x86(zkelf);
@@ -633,16 +651,14 @@ void init_zkelf(py::module& m) {
         .value("STT_GNU_IFUNC", zkelf::st_info::STT_GNU_IFUNC)
         .value("STT_HIOS", zkelf::st_info::STT_HIOS)
         .value("STT_HIPROC", zkelf::st_info::STT_HIPROC)
-        .export_values()
-        .doc() = "symbol info";
+        .export_values();
 
     py::enum_<zkelf::st_other>(zkelf, "st_other")
         .value("STV_DEFAULT", zkelf::st_other::STV_DEFAULT)
         .value("STV_INTERNAL", zkelf::st_other::STV_INTERNAL)
         .value("STV_HIDDEN", zkelf::st_other::STV_HIDDEN)
         .value("STV_PROTECTED", zkelf::st_other::STV_PROTECTED)
-        .export_values()
-        .doc() = "symbol visibilty";
+        .export_values();
 
     init_symtab_for_x64(zkelf);
     init_symtab_for_x86(zkelf);
@@ -687,14 +703,13 @@ void init_zkelf(py::module& m) {
         .value("DT_HIOS", zkelf::d_tag::DT_HIOS)
         .value("DT_LOPROC", zkelf::d_tag::DT_LOPROC)
         .value("DT_HIPROC", zkelf::d_tag::DT_HIPROC)
-        .export_values()
-        .doc() = "tags of dynamic section entries";
+        .export_values();
 
     init_relocation_for_x64(zkelf);
     init_relocation_for_x86(zkelf);
 
     init_dynamic_for_x64(zkelf);
-    init_symtab_for_x86(zkelf);
+    init_dynamic_for_x86(zkelf);
 
     init_nhdr_for_x64(zkelf);
     init_nhdr_for_x86(zkelf);
@@ -711,11 +726,12 @@ void init_zkelf(py::module& m) {
         .value("ELF_SAVE_AT_EXIT",
                zkelf::elf_save_options::ELF_SAVE_AT_EXIT)
         .value("ELF_NO_SAVE", zkelf::elf_save_options::ELF_NO_SAVE)
-        .export_values()
-        .doc() = "save options for elf binaries opened for read and write";
+        .export_values();
 
     py::class_<zkelf::elf_read_write>(zkelf, "elf_read_write")
         .def_readwrite("save_options",
                        &zkelf::elf_read_write::save_options)
         .doc() = "elf binaries that are opened for both read and write";
+
+    init_zkelf_cls(zkelf);
 }
