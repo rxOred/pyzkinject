@@ -1,1 +1,0 @@
-/usr/bin/c++ -fPIC -O3 -O3 -flto -shared  -o pyzkinject.cpython-310-x86_64-linux-gnu.so CMakeFiles/pyzkinject.dir/python/pyzkinject.cpp.o CMakeFiles/pyzkinject.dir/python/zkelf.cpp.o CMakeFiles/pyzkinject.dir/python/zklog.cpp.o CMakeFiles/pyzkinject.dir/python/zkmemorymap.cpp.o CMakeFiles/pyzkinject.dir/python/zkprocess.cpp.o  /usr/lib/libzkinject.so 

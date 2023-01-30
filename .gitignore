@@ -3,6 +3,7 @@
 .cache/
 debug/
 build/*
+build/
 .gdb_history
 # Prerequisites
 *.d
