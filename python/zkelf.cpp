@@ -194,7 +194,7 @@ void init_dynamic_for_x86(py::module& m) {
 }
 
 // TODO
-//  in elfobj, functions that return raw pointers might not work
+// in elfobj, functions that return raw pointers might not work
 // properly
 void init_elfobj_for_x64(py::module& m) {
     py::class_<zkelf::ElfObj<x64>>(m, "Elfobj_x64")
@@ -285,25 +285,27 @@ void init_elfobj_for_x86(py::module& m) {
 }
 
 void init_zkelf_cls(py::module& m) {
-    py::class_<zkelf::ZkElf>(m, "Zkelf")
-        .def(py::init(
-            [](zkelf::ElfObj<x64> elf, std::optional<zklog::ZkLog*> log) {
-                return std::make_unique<zkelf::ZkElf>(
-                    elf, zkelf::elf_read_only{}, log);
-            }))
-        .def(py::init(
-            [](zkelf::ElfObj<x86> elf, std::optional<zklog::ZkLog*> log) {
-                return std::make_unique<zkelf::ZkElf>(
-                    elf, zkelf::elf_read_only{}, log);
-            }))
-        .def(py::init([](zkelf::ElfObj<x64> elf, zkelf::elf_read_write op,
+    py::class_<zkelf::ZkElf, std::shared_ptr<zkelf::ZkElf>>(m, "Zkelf")
+        .def(py::init([](std::shared_ptr<zkelf::ElfObj<x64>> elf,
+                         std::optional<zklog::ZkLog*> log) {
+            return std::make_unique<zkelf::ZkElf>(
+                elf, zkelf::elf_read_only{}, log);
+        }), py::return_value_policy::reference)
+        .def(py::init([](std::shared_ptr<zkelf::ElfObj<x86>> elf,
+                         std::optional<zklog::ZkLog*> log) {
+            return std::make_unique<zkelf::ZkElf>(
+                elf, zkelf::elf_read_only{}, log);
+        }), py::return_value_policy::reference)
+        .def(py::init([](std::shared_ptr<zkelf::ElfObj<x64>> elf,
+                         zkelf::elf_read_write op,
                          std::optional<zklog::ZkLog*> log) {
             return std::make_unique<zkelf::ZkElf>(elf, op, log);
-        }))
-        .def(py::init([](zkelf::ElfObj<x86> elf, zkelf::elf_read_write op,
+        }), py::return_value_policy::reference)
+        .def(py::init([](std::shared_ptr<zkelf::ElfObj<x86>> elf,
+                         zkelf::elf_read_write op,
                          std::optional<zklog::ZkLog*> log) {
             return std::make_unique<zkelf::ZkElf>(elf, op, log);
-        }))
+        }), py::return_value_policy::reference)
         .def("get_memory_map", &zkelf::ZkElf::get_memory_map)
         .def("get_map_size", &zkelf::ZkElf::get_map_size)
         .def("is_stripped", &zkelf::ZkElf::is_stripped)
@@ -444,8 +446,9 @@ void init_zkelf_cls(py::module& m) {
 void init_zkelf(py::module& m) {
     auto zkelf = m.def_submodule("zkelf");
     zkelf.doc() = "zkinject's elf parser library";
-    zkelf.def("load_elf_from_file", zkelf::load_elf_from_file);
-    zkelf.def("load_elf_writable_from_file", zkelf::load_elf_writable_from_file);
+    zkelf.def("load_elf_from_file", &zkelf::load_elf_from_file, py::return_value_policy::reference_internal);
+    zkelf.def("load_elf_writable_from_file",
+              &zkelf::load_elf_writable_from_file, py::return_value_policy::reference);
     // zkelf.def("load_elf_from_memory");
 
     py::enum_<zkelf::ei_class>(zkelf, "ei_class")
