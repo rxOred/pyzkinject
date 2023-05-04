@@ -6,7 +6,7 @@
 namespace py = pybind11;
 
 extern void init_zkmemorymap(py::module& m);
-// extern void init_zkptrace(py::module& m);
+extern void init_zkptrace(py::module& m);
 
 void init_zkprocess(py::module& m) {
     auto process = m.def_submodule("zkprocess");
@@ -15,5 +15,5 @@ void init_zkprocess(py::module& m) {
     // zkprocess stuff here
 
     init_zkmemorymap(process);
-    // init_zkptrace(process);
+    init_zkptrace(process);
 }

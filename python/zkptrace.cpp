@@ -1,0 +1,129 @@
+#include <pybind11/numpy.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+
+#include <optional>
+#include <zkinject/zklog.hh>
+#include <zkinject/zkptrace.hh>
+#include <zkinject/zktypes.hh>
+
+namespace py = pybind11;
+
+void init_for_x64(py::module &zkp) {
+    py::class_<zkprocess::Ptrace<x64>>(zkp, "Zkptrace_x64")
+        .def(py::init<char *const *, std::optional<zktypes::u8_t>,
+                      std::optional<zklog::ZkLog *>>())
+        .def(py::init<pid_t, std::optional<zktypes::u8_t>,
+                      std::optional<zklog::ZkLog *>>())
+        .def("get_pid", &zkprocess::Ptrace<x64>::get_pid)
+        .def("get_process_state",
+             &zkprocess::Ptrace<x64>::get_process_state_info)
+        .def("attach_to_process",
+             &zkprocess::Ptrace<x64>::attach_to_process)
+        .def("start_process", &zkprocess::Ptrace<x64>::start_process)
+        .def("detach_from_process",
+             &zkprocess::Ptrace<x64>::detach_from_process)
+        .def("seize_process", &zkprocess::Ptrace<x64>::seize_process)
+        .def("kill_process", &zkprocess::Ptrace<x64>::kill_process)
+        .def("continue_process", &zkprocess::Ptrace<x64>::continue_process)
+        .def("is_ptrace_stop", &zkprocess::Ptrace<x64>::is_ptrace_stop)
+        .def("wait_for_process", &zkprocess::Ptrace<x64>::wait_for_process)
+        .def("generate_address", &zkprocess::Ptrace<x64>::generate_address)
+        .def("read_process_memory",
+             &zkprocess::Ptrace<x64>::read_process_memory)
+        .def("write_process_memory",
+             &zkprocess::Ptrace<x64>::write_process_memory)
+        .def("read_process_registers",
+             &zkprocess::Ptrace<x64>::read_process_registers)
+        .def("write_process_registers",
+             &zkprocess::Ptrace<x64>::write_process_registers);
+}
+
+void init_for_x86(py::module &zkp) {
+     py::class_<zkprocess::Ptrace<x86>>(zkp, "Zkptrace_x86")
+        .def(py::init<char *const *, std::optional<zktypes::u8_t>,
+                      std::optional<zklog::ZkLog *>>())
+        .def(py::init<pid_t, std::optional<zktypes::u8_t>,
+                      std::optional<zklog::ZkLog *>>())
+        .def("get_pid", &zkprocess::Ptrace<x86>::get_pid)
+        .def("get_process_state",
+             &zkprocess::Ptrace<x86>::get_process_state_info)
+        .def("attach_to_process",
+             &zkprocess::Ptrace<x86>::attach_to_process)
+        .def("start_process", &zkprocess::Ptrace<x86>::start_process)
+        .def("detach_from_process",
+             &zkprocess::Ptrace<x86>::detach_from_process)
+        .def("seize_process", &zkprocess::Ptrace<x86>::seize_process)
+        .def("kill_process", &zkprocess::Ptrace<x86>::kill_process)
+        .def("continue_process", &zkprocess::Ptrace<x86>::continue_process)
+        .def("is_ptrace_stop", &zkprocess::Ptrace<x86>::is_ptrace_stop)
+        .def("wait_for_process", &zkprocess::Ptrace<x86>::wait_for_process)
+        .def("generate_address", &zkprocess::Ptrace<x86>::generate_address)
+        .def("read_process_memory",
+             &zkprocess::Ptrace<x86>::read_process_memory)
+        .def("write_process_memory",
+             &zkprocess::Ptrace<x86>::write_process_memory)
+        .def("read_process_registers",
+             &zkprocess::Ptrace<x86>::read_process_registers)
+        .def("write_process_registers",
+             &zkprocess::Ptrace<x86>::write_process_registers);
+}
+
+void init_zkptrace(py::module &m) {
+    auto zkp = m.def_submodule("zkptrace");
+    zkp.doc() = "zkinject's ptrace engine";
+    zkp.def("init_from_file_if_x86", &zkprocess::init_from_file_if_x86,
+            py::return_value_policy::reference_internal);
+    zkp.def("init_from_file_if_x64", &zkprocess::init_from_file_if_x64,
+            py::return_value_policy::reference_internal);
+    zkp.def("init_from_pid_if_x64", &zkprocess::init_from_pid_if_x64,
+            py::return_value_policy::reference_internal);
+    zkp.def("init_from_pid_if_x86", &zkprocess::init_from_pid_if_x86,
+            py::return_value_policy::reference_internal);
+
+    py::enum_<zkprocess::PTRACE_FLAGS>(zkp, "PTRACE_FLAGS")
+        .value("PTRACE_SEIZE", zkprocess::PTRACE_FLAGS::PTRACE_SEIZE)
+        .value("PTRACE_ATTACH_NOW",
+               zkprocess::PTRACE_FLAGS::PTRACE_ATTACH_NOW)
+        .value("PTRACE_START_NOW",
+               zkprocess::PTRACE_FLAGS::PTRACE_START_NOW)
+        .value("PTRACE_DISABLE_ASLR",
+               zkprocess::PTRACE_FLAGS::PTRACE_DISABLE_ASLR)
+        .export_values();
+
+    py::enum_<zkprocess::PROCESS_STATE>(zkp, "PROCESS_STATE")
+        .value("PROCESS_NOT_STARTED",
+               zkprocess::PROCESS_STATE::PROCESS_NOT_STARTED)
+        .value("PROCESS_STATE_DETACHED",
+               zkprocess::PROCESS_STATE::PROCESS_STATE_DETACHED)
+        .value("PROCESS_STATE_EXITED",
+               zkprocess::PROCESS_STATE::PROCESS_STATE_EXITED)
+        .value("PROCESS_STATE_SIGNALED",
+               zkprocess::PROCESS_STATE::PROCESS_STATE_SIGNALED)
+        .value("PROCESS_STATE_STOPPED",
+               zkprocess::PROCESS_STATE::PROCESS_STATE_STOPPED)
+        .value("PROCESS_STATE_CONTINUED",
+               zkprocess::PROCESS_STATE::PROCESS_STATE_CONTINUED)
+        .value("PROCESS_STATE_FAILED",
+               zkprocess::PROCESS_STATE::PROCESS_STATE_FAILED)
+        .export_values();
+
+    py::enum_<zkprocess::PTRACE_STOP_STATE>(zkp, "PTRACE_STOP_STATE")
+        .value("PTRACE_STOP_NOT_STOPPED",
+               zkprocess::PTRACE_STOP_STATE::PTRACE_STOP_NOT_STOPPED)
+        .value("PTRACE_STOP_SIGNAL_DELIVERY",
+               zkprocess::PTRACE_STOP_SIGNAL_DELIVERY)
+        .value("PTRACE_STOP_GROUP",
+               zkprocess::PTRACE_STOP_STATE::PTRACE_STOP_GROUP)
+        .value("PTRACE_STOP_SYSCALL",
+               zkprocess::PTRACE_STOP_STATE::PTRACE_STOP_SYSCALL)
+        .value("PTRACE_STOP_PTRACE_EVENT",
+               zkprocess::PTRACE_STOP_STATE::PTRACE_STOP_PTRACE_EVENT)
+        .export_values();
+
+    py::enum_<zkprocess::PTRACE_OPTIONS>(zkp, "PTRACE_OPTIONS")
+        .export_values();
+
+    init_for_x64(zkp);
+    init_for_x86(zkp);
+}
