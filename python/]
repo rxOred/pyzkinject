@@ -43,28 +43,24 @@ void init_for_x64(py::module &zkp) {
 }
 
 int get_array_length(std::string *ptr) {
-    int i = 0;
-    while (!ptr[i].empty()) {
-        ++i;
-    }
-    return i;
+	int i = 0;
+	while(!ptr[i].empty()) {
+		++i;
+	}
+	return i;
 }
 
 void init_for_x86(py::module &zkp) {
     py::class_<zkprocess::Ptrace<x86>>(zkp, "Zkptrace_x86")
-        .def(py::init([](std::string path[],
-                         std::optional<zktypes::u8_t> flags,
-                         std::optional<zklog::ZkLog> log) {
-                 int len = get_array_length(path);
-
-                 for (int i = 0; i < len; i++) {
-                     args[i] = const_cast<char *>(path[i].c_str());
-                 }
-                 return std::make_unique<zkprocess::Ptrace<x86>>(
-                     args, flags, log);
-             }),
-             py::return_value_policy::reference)
-        .def(py::init<char *const *, std::optional<zktypes::u8_t>,
+		.def(py::init([](std::string path[], std::optional<zktypes::u8_t> flags, std::optional<zklog::ZkLog> log) {
+			int len = get_array_length(path);
+			char *args[len];
+			for (int i = 0; i < len; i++) {
+				args[i] = const_cast<char *>(path[i].c_str());
+			}
+			std::make_unique<zkprocess::Ptrace<x86>>(args, log);
+		}), py::return_value_policy::reference)
+        .def(py::init<char * const*, std::optional<zktypes::u8_t>,
                       std::optional<zklog::ZkLog *>>())
         .def(py::init<pid_t, std::optional<zktypes::u8_t>,
                       std::optional<zklog::ZkLog *>>())
